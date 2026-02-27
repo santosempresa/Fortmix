@@ -1,0 +1,45 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  
+  --color-fortmix-red: #b91c1c;
+  --color-slate-50: #f8fafc;
+  --color-slate-200: #e2e8f0;
+  --color-slate-500: #64748b;
+  --color-slate-800: #1e293b;
+}
+
+@layer base {
+  body {
+    @apply bg-slate-50 text-slate-800 font-sans antialiased;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-fortmix-red text-white px-4 py-2 rounded-md font-medium hover:bg-red-800 transition-colors disabled:opacity-50;
+  }
+  
+  .btn-secondary {
+    @apply border border-slate-200 bg-white text-slate-800 px-4 py-2 rounded-md font-medium hover:bg-slate-50 transition-colors;
+  }
+  
+  .card {
+    @apply bg-white border border-slate-200 rounded-md shadow-sm p-4;
+  }
+  
+  .table-header {
+    @apply bg-slate-50 border-b border-slate-200 text-slate-500 text-xs uppercase font-semibold text-left px-4 py-2;
+  }
+  
+  .table-cell {
+    @apply border-b border-slate-100 px-4 py-2 text-sm;
+  }
+  
+  .input-field {
+    @apply border border-slate-200 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-fortmix-red w-full;
+  }
+}
