@@ -496,7 +496,7 @@ const Products: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [formData, setFormData] = useState({
-    code: '', name: '', category: 'Básico', price: 0, cost_price: 0, min_stock: 5, unit: 'Unidade'
+    code: '', name: '', category: 'Básico', price: 0, cost_price: 0, stock_quantity: 0, min_stock: 5, unit: 'Unidade'
   });
 
   const fetchProducts = () => {
@@ -518,13 +518,14 @@ const Products: React.FC = () => {
         category: product.category,
         price: product.price,
         cost_price: product.cost_price,
+        stock_quantity: product.stock_quantity,
         min_stock: product.min_stock,
         unit: product.unit
       });
     } else {
       setEditingProduct(null);
       setFormData({
-        code: '', name: '', category: 'Básico', price: 0, cost_price: 0, min_stock: 5, unit: 'Unidade'
+        code: '', name: '', category: 'Básico', price: 0, cost_price: 0, stock_quantity: 0, min_stock: 5, unit: 'Unidade'
       });
     }
     setIsModalOpen(true);
@@ -634,16 +635,22 @@ const Products: React.FC = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="text-xs font-bold text-slate-500 uppercase mb-1 block">Preço Venda</label>
-                  <input type="number" step="0.01" required className="input-field" value={formData.price} onChange={e => setFormData({...formData, price: parseFloat(e.target.value)})} />
+                  <input type="number" step="0.01" required className="input-field" value={formData.price || ''} onChange={e => setFormData({...formData, price: parseFloat(e.target.value) || 0})} />
                 </div>
                 <div>
                   <label className="text-xs font-bold text-slate-500 uppercase mb-1 block">Preço Custo</label>
-                  <input type="number" step="0.01" required className="input-field" value={formData.cost_price} onChange={e => setFormData({...formData, cost_price: parseFloat(e.target.value)})} />
+                  <input type="number" step="0.01" required className="input-field" value={formData.cost_price || ''} onChange={e => setFormData({...formData, cost_price: parseFloat(e.target.value) || 0})} />
                 </div>
               </div>
-              <div>
-                <label className="text-xs font-bold text-slate-500 uppercase mb-1 block">Alerta de Estoque Mínimo ({formData.unit})</label>
-                <input type="number" required className="input-field" value={formData.min_stock} onChange={e => setFormData({...formData, min_stock: parseInt(e.target.value)})} />
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-xs font-bold text-slate-500 uppercase mb-1 block">Estoque Atual</label>
+                  <input type="number" required className="input-field" value={formData.stock_quantity || ''} onChange={e => setFormData({...formData, stock_quantity: parseInt(e.target.value) || 0})} />
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-slate-500 uppercase mb-1 block">Alerta de Estoque Mínimo ({formData.unit})</label>
+                  <input type="number" required className="input-field" value={formData.min_stock || ''} onChange={e => setFormData({...formData, min_stock: parseInt(e.target.value) || 0})} />
+                </div>
               </div>
               <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
                 <button type="button" onClick={() => setIsModalOpen(false)} className="btn-secondary">Cancelar</button>
