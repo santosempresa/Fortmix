@@ -334,9 +334,13 @@ async function startServer() {
     });
     app.use(vite.middlewares);
   } else {
-    app.use(express.static(path.join(__dirname, 'dist')));
+    const distPath = path.join(__dirname, 'dist');
+    app.use(express.static(distPath));
     app.get('*', (req, res) => {
-      res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+      // On Vercel, this route might not be reached due to vercel.json routes,
+      // but we keep it for general production compatibility.
+      const indexPath = path.join(distPath, 'index.html');
+      res.sendFile(indexPath);
     });
   }
 
