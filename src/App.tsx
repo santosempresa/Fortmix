@@ -1027,7 +1027,7 @@ export default function App() {
               <button type="submit" className="w-full btn-primary h-11 mt-2">Entrar no Sistema</button>
             </form>
           </div>
-          <p className="text-center text-[10px] text-slate-400 mt-8 uppercase tracking-widest">Fortmix ERP v1.0.0 • 2024</p>
+          <p className="text-center text-[10px] text-slate-400 mt-8 uppercase tracking-widest">Fortmix ERP v1.0.0 • 2026</p>
         </div>
       </div>
     );

@@ -1,5 +1,4 @@
 import express from 'express';
-import { createServer as createViteServer } from 'vite';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { createClient } from '@supabase/supabase-js';
@@ -53,20 +52,34 @@ const logAudit = async (userId: number, action: string, entity: string, details:
 // --- API Routes ---
 
 app.post('/api/auth/login', async (req, res) => {
-  const { username, password } = req.body;
-  
-  const { data: user, error } = await supabase
-    .from('users')
-    .select('*')
-    .eq('username', username)
-    .single();
+  try {
+    const { username, password } = req.body;
+    
+    if (!process.env.SUPABASE_URL || !process.env.SUPABASE_ANON_KEY) {
+      return res.status(500).json({ message: 'Configuração do Supabase ausente no servidor (Verifique as variáveis de ambiente no Vercel)' });
+    }
 
-  if (user && bcrypt.compareSync(password, user.password)) {
-    const token = jwt.sign({ id: user.id, username: user.username, role: user.role }, JWT_SECRET, { expiresIn: '8h' });
-    await logAudit(user.id, 'LOGIN', 'AUTH', 'Usuário realizou login no sistema');
-    res.json({ token, user: { id: user.id, username: user.username, name: user.name, role: user.role } });
-  } else {
-    res.status(401).json({ message: 'Usuário ou senha inválidos' });
+    const { data: user, error } = await supabase
+      .from('users')
+      .select('*')
+      .eq('username', username)
+      .single();
+
+    if (error) {
+      console.error('Erro ao buscar usuário:', error);
+      return res.status(401).json({ message: 'Usuário ou senha inválidos' });
+    }
+
+    if (user && bcrypt.compareSync(password, user.password)) {
+      const token = jwt.sign({ id: user.id, username: user.username, role: user.role }, JWT_SECRET, { expiresIn: '8h' });
+      await logAudit(user.id, 'LOGIN', 'AUTH', 'Usuário realizou login no sistema');
+      res.json({ token, user: { id: user.id, username: user.username, name: user.name, role: user.role } });
+    } else {
+      res.status(401).json({ message: 'Usuário ou senha inválidos' });
+    }
+  } catch (err) {
+    console.error('Erro no login:', err);
+    res.status(500).json({ message: 'Erro interno no servidor' });
   }
 });
 
@@ -314,6 +327,7 @@ app.get('/api/reports/sales', authenticateToken, async (req: any, res) => {
 
 async function startServer() {
   if (process.env.NODE_ENV !== 'production') {
+    const { createServer: createViteServer } = await import('vite');
     const vite = await createViteServer({
       server: { middlewareMode: true },
       appType: 'spa',
